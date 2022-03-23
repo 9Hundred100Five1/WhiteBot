@@ -14,11 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import discord
-import logging
+from discord import ApplicationContext, slash_command
 from discord.ext import commands
 from discord.http import Route
-from discord.commands import ApplicationContext
-from utils.commands import slash_command
+import logging
 
 logger = logging.getLogger(__name__)
 

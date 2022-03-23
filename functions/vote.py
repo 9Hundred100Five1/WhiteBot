@@ -14,9 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import discord
+from discord import ApplicationContext, Option, OptionChoice, AutocompleteContext, slash_command
 from discord.ext import commands
-from discord.commands import ApplicationContext, Option, AutocompleteContext, OptionChoice
-from utils.commands import slash_command
 from discord.ui import View, Button
 import sqlite3
 import os

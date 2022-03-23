@@ -14,9 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import discord
+from discord import ApplicationContext, Option, slash_command
 from discord.ext import commands
-from discord.commands import ApplicationContext, Option
-from utils.commands import slash_command
 from datetime import date, datetime, timedelta
 import requests
 import os

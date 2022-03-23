@@ -15,15 +15,14 @@
 
 import asyncio
 import discord
+from discord import ApplicationContext, Option, OptionChoice, slash_command
+from discord.ext import commands
 import logging
 import requests
 import os
 import re
 from requests.utils import quote
 from datetime import datetime, timedelta
-from discord.ext import commands
-from utils.commands import slash_command
-from discord.commands import ApplicationContext, Option, OptionChoice
 
 PAPAGO_URL = "https://openapi.naver.com/v1/papago/n2mt"
 PAPAGO_API_ERROR_MSG_REGEX = re.compile(".+ \\((.+)\\)")

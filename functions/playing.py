@@ -14,11 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import discord
-import random
+from discord import ApplicationContext, Option, slash_command
 from discord.ext import commands
-from utils.commands import slash_command
-from discord.commands import ApplicationContext, Option
 import logging
+import random
 from typing import List
 
 logger = logging.getLogger(__name__)

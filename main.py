@@ -19,14 +19,15 @@ import dotenv
 import logging
 import utils.logging
 import utils.koreanbots
+from utils.functions import apply_if_not_none
 from discord.ext import commands
 import time
 
 dotenv.load_dotenv()
 utils.logging.setup_logging()
 
-bot = commands.Bot(command_prefix="/", help_command=None)
-aiodb = None
+_debug_guilds = [ apply_if_not_none(os.getenv("TEST_GUILD_ID"), lambda x : int(x)) ]
+bot = commands.Bot(command_prefix="/", help_command=None, debug_guilds=_debug_guilds)
 logger = logging.getLogger("main")
 
 bot.start_time = time.time()

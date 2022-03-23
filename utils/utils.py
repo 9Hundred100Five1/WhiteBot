@@ -41,3 +41,9 @@ def to_dict(data, get_key: Callable, get_value: Callable = lambda x: x) -> dict:
     for datum in data:
         items[get_key(datum)] = get_value(datum)
     return items
+
+
+def has(obj, name: str) -> bool:
+    if not hasattr(obj, name):
+        return False
+    return getattr(obj, name) is not None

@@ -15,7 +15,7 @@
 
 import os
 from discord.commands import SlashCommand, application_command
-from utils.utils import apply_if_not_none
+from utils.functions import apply_if_not_none
 
 TEST_GUILD_ID = apply_if_not_none(os.getenv("TEST_GUILD_ID"), lambda x: int(x))
 

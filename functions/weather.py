@@ -20,7 +20,7 @@ from utils.commands import slash_command
 from datetime import date, datetime, timedelta
 import requests
 import os
-from utils.utils import apply_if_not_none, to_querystring, to_dict
+from utils.functions import apply_if_not_none, to_querystring, to_dict
 import logging
 
 API_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?"

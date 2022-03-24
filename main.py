@@ -26,9 +26,13 @@ import time
 dotenv.load_dotenv()
 utils.logging.setup_logging()
 
+logger = logging.getLogger(__name__)
+
 _debug_guilds = [ apply_if_not_none(os.getenv("TEST_GUILD_ID"), lambda x : int(x)) ]
+if _debug_guilds is not None:
+    logger.info(f"Debug guilds: {_debug_guilds}")
+
 bot = commands.Bot(command_prefix="/", help_command=None, debug_guilds=_debug_guilds)
-logger = logging.getLogger("main")
 
 bot.start_time = time.time()
 

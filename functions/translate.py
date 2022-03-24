@@ -15,7 +15,12 @@
 
 import asyncio
 import discord
-from discord import ApplicationContext, Option, OptionChoice, slash_command
+from discord import (
+    ApplicationContext,
+    Option,
+    OptionChoice,
+    slash_command
+)
 from discord.ext import commands
 import logging
 import requests

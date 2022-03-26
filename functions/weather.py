@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+from json import JSONDecodeError
 import discord
 from discord.ext import commands
 from discord.commands import ApplicationContext, Option
@@ -52,10 +53,12 @@ class weather(commands.Cog):
     def __init__(self):
         self.service_key = os.getenv("WEATHER_KEY")
         if self.service_key is None:
-            logger.warning("Weather API key not provided. Weather feature will be disabled")
+            logger.warning(
+                "Weather API key not provided. Weather feature will be disabled"
+            )
 
     @slash_command(description="현재 날씨를 조회합니다.")
-    async def weather(
+    async def 날씨(
         self,
         ctx: ApplicationContext,
         place: Option(str, "날씨를 조회할 장소를 선택해주세요.", choices=list(place_data.keys())),
@@ -64,7 +67,8 @@ class weather(commands.Cog):
             embed = discord.Embed(
                 title="날씨 기능이 비활성화 되어있어요",
                 description="관리자에게 문의해주세요\n[Team White 디스코드 서버](https://discord.gg/aebSVBgzuG)",
-                color=0xffffff)
+                color=0xFFFFFF,
+            )
             return await ctx.respond(embed=embed)
 
         await ctx.defer()
@@ -80,29 +84,37 @@ class weather(commands.Cog):
             "nx": px,
             "ny": py,
         }
+        try:
+            result = requests.get(API_URL + to_querystring(payload))
+            data = result.json()["response"]["body"]["items"]["item"]
 
-        result = requests.get(API_URL + to_querystring(payload))
-        data = result.json()["response"]["body"]["items"]["item"]
+            data = to_dict(data, lambda k: k["category"], lambda v: v["fcstValue"])
 
-        data = to_dict(data, lambda k: k["category"], lambda v: v["fcstValue"])
+            temperature = apply_if_not_none(data.get("TMP"), lambda x: f"{x}℃")
+            wind_speed = apply_if_not_none(data.get("WSD"), lambda x: f"{x}m/s")
+            weather_state = apply_if_not_none(data.get("PTY"), self.process_pty)
 
-        temperature = apply_if_not_none(data.get("TMP"), lambda x: f"{x}℃")
-        wind_speed = apply_if_not_none(data.get("WSD"), lambda x: f"{x}m/s")
-        weather_state = apply_if_not_none(data.get("PTY"), self.process_pty)
+            if weather_state is None:
+                weather_state = apply_if_not_none(data.get("SKY"), self.process_sky)
 
-        if weather_state is None:
-            weather_state = apply_if_not_none(data.get("SKY"), self.process_sky)
-
-        embed = (
-            discord.Embed(
-                title="현재 날씨 정보", description="현재 날씨 정보를 조회했습니다.", color=0xFFFFFF
+            embed = (
+                discord.Embed(
+                    title="현재 날씨 정보", description="현재 날씨 정보를 조회했습니다.", color=0xFFFFFF
+                )
+                .add_field(name="기온", value=temperature or "데이터가 없습니다", inline=True)
+                .add_field(name="풍속", value=wind_speed or "데이터가 없습니다", inline=True)
+                .add_field(name="날씨", value=weather_state or "데이터가 없습니다", inline=False)
             )
-            .add_field(name="기온", value=temperature or "데이터가 없습니다", inline=True)
-            .add_field(name="풍속", value=wind_speed or "데이터가 없습니다", inline=True)
-            .add_field(name="날씨", value=weather_state or "데이터가 없습니다", inline=False)
-        )
 
-        await ctx.followup.send(embed=embed)
+            await ctx.followup.send(embed=embed)
+        except JSONDecodeError:
+            embed = (
+                discord.Embed(
+                    title="오류가 생겼어요",
+                    description="관리자에게 문의해주세요\n[Team White 디스코드 서버](https://discord.gg/aebSVBgzuG)",
+                    color=0xFFFFFF,
+                )
+            )
 
     def process_pty(self, value) -> str:
         if value == "1":
